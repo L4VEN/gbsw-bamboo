@@ -1,6 +1,6 @@
 // App.tsx 파일
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Report from "./Report";
 import axios from 'axios';
 import GbswChar from '../src/img/gbsw_char.png';
@@ -56,6 +56,7 @@ const App: React.FC = () => {
         console.error('에러 발생:', error);
       });
   };
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     // 입력 폼의 값이 변경될 때마다 상태 업데이트
@@ -71,6 +72,8 @@ const App: React.FC = () => {
   const toggleTheme = () => {
     setIsDarkTheme((prev) => !prev);
   };
+
+  
 
   return (
     <>
@@ -95,14 +98,6 @@ const App: React.FC = () => {
               placeholder="제목 (최대 20자)"
               id="title"
               value={formData.title}
-              onChange={handleChange}
-              className={`${isDarkTheme ? "dark-theme" : ""}`}
-            />
-            <input
-              type="text"
-              placeholder="설명"
-              id="description"
-              value={formData.description}
               onChange={handleChange}
               className={`${isDarkTheme ? "dark-theme" : ""}`}
             />
@@ -136,6 +131,14 @@ const App: React.FC = () => {
               <option value="기타">기타</option>
             </select>
           </div>
+          <input
+              type="text"
+              placeholder="설명"
+              id="description"
+              value={formData.description}
+              onChange={handleChange}
+              className={`${isDarkTheme ? "dark-theme" : ""}`}
+            />
           <button
             type="submit"
             className={`${isDarkTheme ? "dark-theme" : ""}`}
@@ -166,3 +169,7 @@ const App: React.FC = () => {
 };
 
 export default App;
+function loadMore() {
+  throw new Error("Function not implemented.");
+}
+
