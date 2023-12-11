@@ -83,6 +83,7 @@ const App: React.FC = () => {
         console.error("에러 발생:", error);
       });
   };
+  
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -101,6 +102,8 @@ const App: React.FC = () => {
   const toggleTheme = () => {
     setIsDarkTheme((prev) => !prev);
   };
+
+  
 
   return (
     <>
@@ -125,14 +128,6 @@ const App: React.FC = () => {
               placeholder="제목 (최대 20자)"
               id="title"
               value={formData.title}
-              onChange={handleChange}
-              className={`${isDarkTheme ? "dark-theme" : ""}`}
-            />
-            <input
-              type="text"
-              placeholder="설명"
-              id="description"
-              value={formData.description}
               onChange={handleChange}
               className={`${isDarkTheme ? "dark-theme" : ""}`}
             />
@@ -166,6 +161,14 @@ const App: React.FC = () => {
               <option value="기타">기타</option>
             </select>
           </div>
+          <input
+              type="text"
+              placeholder="설명"
+              id="description"
+              value={formData.description}
+              onChange={handleChange}
+              className={`${isDarkTheme ? "dark-theme" : ""}`}
+            />
           <button
             type="submit"
             className={`${isDarkTheme ? "dark-theme" : ""}`}
@@ -199,3 +202,7 @@ const App: React.FC = () => {
 };
 
 export default App;
+function loadMore() {
+  throw new Error("Function not implemented.");
+}
+
