@@ -1,10 +1,9 @@
-// App.tsx 파일
+// App.tsx
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Report from "./Report";
-import axios from 'axios';
-import GbswChar from '../src/img/gbsw_char.png';
-
+import axios from "axios";
+import GbswChar from "../src/img/gbsw_char.png";
 
 // Post 인터페이스 정의
 interface Post {
@@ -15,7 +14,6 @@ interface Post {
   name: string;
   password: string;
   categories: string;
-  // 다른 필요한 속성들도 추가할 수 있습니다.
 }
 
 const App: React.FC = () => {
@@ -29,44 +27,76 @@ const App: React.FC = () => {
     name: "",
     password: "",
     createdAt: new Date(),
-    categories: "유머"
+    categories: "유머",
   });
+
+  const [visiblePostCount, setVisiblePostCount] = useState(10);
 
   useEffect(() => {
     // 페이지 로드 시 GET 요청 수행
-    axios.get<Post[]>('http://localhost:3000/api/boards')
-      .then(response => {
+    axios
+      .get<Post[]>("http://localhost:3000/api/boards")
+      .then((response) => {
         setPostData(response.data.reverse());
       })
-      .catch(error => {
-        console.error('에러 발생:', error);
+      .catch((error) => {
+        console.error("에러 발생:", error);
       });
   }, []);
+
+  const loadingRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visiblePostCount < postData.length) {
+          // 화면에 로딩 요소가 나타나고, 더 로딩할 포스트가 남아있을 때 추가 컴포넌트 로딩
+          setVisiblePostCount((prevCount) =>
+            Math.min(prevCount + 10, postData.length)
+          );
+        }
+      },
+      { threshold: [1] }
+    );
+
+    const loadingElement = loadingRef.current;
+
+    if (loadingElement) {
+      observer.observe(loadingElement);
+      console.log("Observer가 로딩 요소를 관찰 중입니다.");
+    }
+
+    return () => observer.disconnect(); // 컴포넌트 언마운트 시 Observer 해제
+  }, [visiblePostCount, postData.length]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // POST 요청 수행
-    axios.post<Post>('http://localhost:3000/api/boards', formData)
-      .then(response => {
-        console.log('제보 성공:', response.data);
+    axios
+      .post<Post>("http://localhost:3000/api/boards", formData)
+      .then((response) => {
+        console.log("제보 성공:", response.data);
         setIsSubmitted(true);
       })
-      .catch(error => {
-        console.error('에러 발생:', error);
+      .catch((error) => {
+        console.error("에러 발생:", error);
       });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     // 입력 폼의 값이 변경될 때마다 상태 업데이트
-    if (e.target.value != 'none') {
+    if (e.target.value !== "none") {
       setFormData({
         ...formData,
-        [e.target.id]: e.target.value
-      })
+        [e.target.id]: e.target.value,
+      });
     }
-  }
- 
+  };
 
   const toggleTheme = () => {
     setIsDarkTheme((prev) => !prev);
@@ -148,18 +178,21 @@ const App: React.FC = () => {
             </div>
           )}
         </form>
-
-        {/* 제보된 게시물 목록 출력 */}
-        {postData.map((post) => (
-          <Report
-            date={post.createdAt}
-            text={post.description}
-            tag={post.categories}
-            key={post.id}
-            {...post}
-            isDarkTheme={isDarkTheme}
-          />
-        ))}
+        <div id="post-container">
+          {postData.slice(0, visiblePostCount).map((post, index) => (
+            <Report
+              date={post.createdAt}
+              text={post.description}
+              tag={post.categories}
+              key={post.id}
+              {...post}
+              isDarkTheme={isDarkTheme}
+            />
+          ))}
+        </div>
+        <div ref={loadingRef} style={{ height: "10px" }}>
+          {/* 로딩 표시용 div */}
+        </div>
       </div>
     </>
   );

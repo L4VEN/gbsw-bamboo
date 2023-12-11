@@ -1,3 +1,5 @@
+//Report.tsx 파일
+
 import React, { useEffect, useRef, useState } from "react";
 
 interface ReportProps {
@@ -17,23 +19,23 @@ const Report: React.FC<ReportProps> = ({
   tag,
   isDarkTheme,
 }) => {
-  const [content, setContent] = useState<string>()
+  const [content, setContent] = useState<string>();
 
-  const aboutRef = useRef<HTMLDivElement>(null)
+  const aboutRef = useRef<HTMLDivElement>(null);
 
- useEffect(() => {
-  if(text.split('').length > 80) {
-    console.log('long')
-    setContent(text.substring(0, 80))
-  } else {
-    setContent(text)
-  }
- }, [])
+  useEffect(() => {
+    if (text.split("").length > 80) {
+      console.log("long");
+      setContent(text.substring(0, 80));
+    } else {
+      setContent(text);
+    }
+  }, []);
 
-  const Hiden=() => {
-    aboutRef.current?.style.setProperty('display', 'none')
-    setContent(text)
-  }
+  const Hiden = () => {
+    aboutRef.current?.style.setProperty("display", "none");
+    setContent(text);
+  };
 
   return (
     <div className={`report-container ${isDarkTheme ? "dark-theme" : ""}`}>
@@ -42,9 +44,11 @@ const Report: React.FC<ReportProps> = ({
       <div className="report-title">{title}</div>
       <div>
         <div className="report-text">{content}</div>
-        { text.length > 80 ?
-          <div className='report-about' ref={aboutRef} onClick={Hiden}>자세히 보기</div>
-        : null }
+        {text.length > 80 ? (
+          <div className="report-about" ref={aboutRef} onClick={Hiden}>
+            자세히 보기
+          </div>
+        ) : null}
       </div>
       <div className={`report-tag ${isDarkTheme ? "dark-theme" : ""}`}>
         {tag}
